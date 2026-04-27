@@ -98,9 +98,9 @@ Pressione **`Q`** a qualquer momento.
 │                                                 │
 │  1. Captura a tela atual                        │
 │  2. Compara com imagem_vitoria_magic.png        │
-│     → Se match (conf. ≥ 0.8): conta vitória    │
+│     → Se match (conf. ≥ 0.8): conta vitória     │
 │  3. Compara com imagem_derrota_magic.png        │
-│     → Se match (conf. ≥ 0.8): conta derrota    │
+│     → Se match (conf. ≥ 0.8): conta derrota     │
 │  4. Exibe resultado no terminal                 │
 │  5. Pressione Q para encerrar                   │
 └─────────────────────────────────────────────────┘
