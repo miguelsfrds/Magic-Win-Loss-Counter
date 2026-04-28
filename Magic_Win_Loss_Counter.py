@@ -1,4 +1,6 @@
+#----------------------------------------------------------------------------------
 import pyautogui as pt
+import choice_audio
 import keyboard
 import time
 import sys
@@ -6,6 +8,7 @@ import os
 from rich import print
 from rich.console import Console
 from rich.table import Table
+from rich.progress import track
 #----------------------------------------------------------------------------------
 
 def caminho_arquivo(nome):
@@ -16,9 +19,6 @@ def caminho_arquivo(nome):
 imagem_derrota = caminho_arquivo("imagem_derrota_magic.png")
 imagem_vitoria = caminho_arquivo("imagem_vitoria_magic.png")
 
-imagem_derrota = "imagem_derrota_magic.png"
-imagem_vitoria = "imagem_vitoria_magic.png"
-
 derrotas = 0
 vitorias = 0
 
@@ -27,23 +27,24 @@ foi_vencedor = False
 
 #----------------------------------------------------------------------------------
 
-def procura_imagem_derrota():
+def procura_imagem_derrota(encontrou):
     global derrotas, foi_derrotado
     
-    if encontrou_imagem_derrota:
+    if encontrou:
         #print("ACHEI TUA DERROTA KKKKK!!!")
         if not foi_derrotado:
             derrotas += 1
             foi_derrotado = True
+            choice_audio.tocar_derrota()
             print(f"[red][+]Derrota detectada! Total de derrotas: {derrotas}[/red]")
     else:
         foi_derrotado = False
         #print("[red]NÃO ACHEI A IMAGEM DE DERROTA!![/red]")
         
-def procura_imagem_vitoria():
+def procura_imagem_vitoria(encontrou):
     global vitorias, foi_vencedor
     
-    if encontrou_imagem_vitoria:
+    if encontrou:
         #print("ACHEI A SUA VITORIA!!!")
         if not foi_vencedor:
             vitorias += 1
@@ -54,6 +55,13 @@ def procura_imagem_vitoria():
         #print("[red]NÃO ACHEI A IMAGEM DE VITORIA!![/red]")
 
 #----------------------------------------------------------------------------------
+
+for i in track(range(10), description="ScoreMage está iniciando..."):
+    time.sleep(0.1)
+print("[bold green] SCOREMAGE FOI INICIADO COM SUCESSO!! \n PRECISONE 'Q' PARA ENCERRAR A CONTAGEM [/bold green]")
+
+#----------------------------------------------------------------------------------
+
 while True:
     if keyboard.is_pressed("q"):
         break
@@ -67,10 +75,8 @@ while True:
     except pt.ImageNotFoundException:
         encontrou_imagem_vitoria = None
     
-    procura_imagem_derrota()
-    
-    procura_imagem_vitoria()
-    
+    procura_imagem_derrota(encontrou_imagem_derrota)
+    procura_imagem_vitoria(encontrou_imagem_vitoria)
     
     time.sleep(0.5)
 #----------------------------------------------------------------------------------
