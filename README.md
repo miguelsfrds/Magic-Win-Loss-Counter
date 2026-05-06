@@ -1,166 +1,166 @@
-# 🃏 Magic Win/Loss Counter
+# 🧙 ScoreMage
 
-> Contador automático de vitórias e derrotas para **Magic: The Gathering Arena** usando reconhecimento de imagem em tempo real.
+> Contador automático de vitórias e derrotas para jogos online — sem digitar nada, só jogar.
 
 ---
 
-## 📖 Sobre o Projeto
+## 🎮 O que é o ScoreMage?
 
-O **Magic Win/Loss Counter** é um script Python que monitora sua tela continuamente e detecta automaticamente quando você vence ou perde uma partida no Magic: The Gathering Arena. Ele faz isso comparando o conteúdo da tela com imagens de referência (tela de vitória e tela de derrota), usando visão computacional para identificar o momento exato do resultado.
+O **ScoreMage** é uma ferramenta desktop que monitora sua tela em tempo real e detecta automaticamente quando você venceu ou perdeu uma partida. Chega de ficar anotando no papel ou perdendo a conta no meio de uma sessão intensa — o ScoreMage faz isso por você.
 
-Chega de anotar resultados manualmente — o bot cuida disso pra você!
+E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa. 😈
 
 ---
 
 ## ✨ Funcionalidades
 
-- 🔍 **Detecção automática** de vitórias e derrotas por reconhecimento de imagem
-- 📊 **Contador em tempo real** exibido no terminal com formatação colorida
-- 🛡️ **Anti-duplicata**: cada resultado é contado apenas uma vez por partida
-- ⌨️ **Encerramento fácil** — pressione `Q` para parar o script a qualquer momento
-- 🎨 **Output estilizado** com a biblioteca `rich` (cores, formatação, ícones)
+- 👁️ **Detecção automática por visão computacional** — reconhece telas de vitória e derrota usando reconhecimento de imagem
+- 📊 **Placar em tempo real** — vitórias e derrotas atualizados ao vivo na interface
+- 🔊 **Reação sonora nas derrotas** — toca um áudio aleatório ao detectar uma derrota
+- 🎮 **Suporte a múltiplos jogos** — troca de jogo com um clique, sem reiniciar
+- 🧵 **Monitoramento em thread separada** — o tracker roda em background sem travar a interface
+- 🛑 **Controle total** — botão dedicado para pausar o monitoramento a qualquer momento
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 🕹️ Jogos Suportados
+
+| Jogo | Status |
+|---|---|
+| 🪄 Magic: The Gathering | ✅ Integrado |
+| 💥 Fortnite | ✅ Integrado |
+| ⚔️ League of Legends | ✅ Integrado |
+
+> Quer adicionar outro jogo? Veja a seção [Adicionando Novos Jogos](#-adicionando-novos-jogos).
+
+---
+
+## 🧠 Como Funciona
+
+O ScoreMage usa a biblioteca `pyautogui` para capturar screenshots da tela a cada **0,5 segundos** e compara os frames com imagens de referência de vitória/derrota de cada jogo.
 
 ```
-magic-counter/
+Loop de monitoramento (a cada 0.5s):
+  ├── Captura a tela atual
+  ├── Procura a imagem de vitória → se encontrar (confiança ≥ 80%), incrementa vitórias
+  └── Procura a imagem de derrota → se encontrar (confiança ≥ 80%), incrementa derrotas + toca áudio
+```
+
+A lógica de flag (`foi_vencedor` / `foi_derrotado`) garante que **cada resultado seja contado apenas uma vez**, mesmo que a tela de fim de partida fique visível por vários segundos.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Tecnologia | Finalidade |
+|---|---|
+| `Python 3.x` | Linguagem base |
+| `customtkinter` | Interface gráfica moderna |
+| `pyautogui` | Captura de tela e reconhecimento de imagem |
+| `pygame` | Reprodução dos áudios de derrota |
+| `threading` | Monitoramento em background sem travar a UI |
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+
+- Python 3.8 ou superior
+- As dependências listadas abaixo
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone https://github.com/miguelsfrds/scoremage.git
+cd scoremage
+
+# Instale as dependências
+pip install customtkinter pyautogui pygame
+```
+
+### Execução
+
+```bash
+python interface.py
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+scoremage/
 │
-├── main.py                        # Script principal
-├── imagem_derrota_magic.png       # Imagem de referência para derrota
-├── imagem_vitoria_magic.png       # Imagem de referência para vitória
+├── interface.py          # Interface gráfica principal
+├── win_loss_counter.py   # Lógica de detecção e contagem
+├── choice_audio.py       # Seleção e reprodução de áudios
+│
+├── images/               # Imagens de referência para detecção
+│   ├── imagem_vitoria_magic.png
+│   ├── imagem_derrota_magic.png
+│   ├── imagem_vitoria_fortnite.png
+│   ├── imagem_derrota_fortnite.png
+│   ├── imagem_vitoria_lol.png
+│   └── imagem_derrota_lol.png
+│
+├── audios/
+│   └── derrotas/         # Áudios tocados ao detectar derrota
+│       ├── smzinho_derrota1.mp3
+│       └── ...
+│
 └── README.md
 ```
 
 ---
 
-## 🛠️ Requisitos
+## ➕ Adicionando Novos Jogos
 
-- Python **3.8+**
-- Sistema operacional: **Windows** (recomendado para uso com `pyautogui` e `keyboard`)
+Integrar um novo jogo ao ScoreMage é simples:
 
-### Dependências
-
-Instale todas com:
-
-```bash
-pip install pyautogui keyboard rich
+**1.** Tire prints das telas de vitória e derrota do jogo e salve em `images/`:
+```
+images/imagem_vitoria_seujogo.png
+images/imagem_derrota_seujogo.png
 ```
 
-| Biblioteca    | Uso                                               |
-|---------------|---------------------------------------------------|
-| `pyautogui`   | Captura de tela e localização de imagens          |
-| `keyboard`    | Detecção do atalho de teclado para encerrar       |
-| `rich`        | Formatação colorida e estilizada no terminal      |
-
-> ⚠️ **Nota:** Em sistemas Linux/macOS, pode ser necessário instalar dependências adicionais para o `pyautogui` funcionar corretamente (como `scrot`, `python3-xlib`).
-
----
-
-## 🚀 Como Usar
-
-### 1. Prepare as imagens de referência
-
-Tire prints das telas de **vitória** e **derrota** do Magic Arena e salve como:
-
-- `imagem_vitoria_magic.png`
-- `imagem_derrota_magic.png`
-
-> 💡 **Dica:** Quanto mais específica e única for a região capturada (ex: só o banner "Victory!" ou "Defeat"), melhor será a precisão da detecção.
-
-### 2. Execute o script
-
-```bash
-python main.py
-```
-
-### 3. Jogue normalmente!
-
-O script roda em segundo plano monitorando a tela. Os resultados aparecem automaticamente no terminal:
-
-```
-[+] Vitória detectada! Total de vitórias: 1
-[+] Derrota detectada! Total de derrotas: 1
-```
-
-### 4. Para encerrar
-
-Pressione **`Q`** a qualquer momento.
-
----
-
-## ⚙️ Como Funciona
-
-```
-┌─────────────────────────────────────────────────┐
-│              Loop principal (0.5s)              │
-│                                                 │
-│  1. Captura a tela atual                        │
-│  2. Compara com imagem_vitoria_magic.png        │
-│     → Se match (conf. ≥ 0.8): conta vitória     │
-│  3. Compara com imagem_derrota_magic.png        │
-│     → Se match (conf. ≥ 0.8): conta derrota     │
-│  4. Exibe resultado no terminal                 │
-│  5. Pressione Q para encerrar                   │
-└─────────────────────────────────────────────────┘
-```
-
-A **confiança mínima de 0.8 (80%)** evita falsos positivos — o script só conta o resultado quando tem certeza do que viu na tela.
-
-As flags `foi_derrotado` e `foi_vencedor` garantem que um mesmo resultado não seja contado mais de uma vez enquanto a tela de resultado ainda estiver visível.
-
----
-
-## 🎛️ Configurações
-
-No topo do arquivo `main.py` você pode ajustar:
-
+**2.** Adicione um botão na interface (`interface.py`):
 ```python
-imagem_derrota = "imagem_derrota_magic.png"   # Caminho da imagem de derrota
-imagem_vitoria = "imagem_vitoria_magic.png"   # Caminho da imagem de vitória
+btn_seujogo = ctk.CTkButton(app, text="Seu Jogo", command=lambda: iniciar_jogo("seujogo"))
+btn_seujogo.pack(pady=5)
 ```
 
-E dentro da função `locateOnScreen`, o parâmetro `confidence`:
-
+**3.** Registre o jogo na função `iniciar_jogo`:
 ```python
-pt.locateOnScreen(imagem_vitoria, confidence=0.8)
-#                                             ^^^
-#                     Ajuste entre 0.0 e 1.0 conforme necessário
+elif jogo == "seujogo":
+    counter = WinLossCounter(
+        "images/imagem_vitoria_seujogo.png",
+        "images/imagem_derrota_seujogo.png"
+    )
 ```
 
-- **Aumentar** a confiança → menos falsos positivos, mas pode deixar de detectar
-- **Diminuir** a confiança → mais sensível, mas pode contar resultados incorretos
+> 💡 **Dica:** Use imagens de referência com elementos únicos e estáticos da tela de fim de partida para evitar falsos positivos.
 
 ---
 
-## 🐛 Problemas Comuns
+## 📌 Melhorias Futuras
 
-| Problema | Possível Causa | Solução |
-|---|---|---|
-| Não detecta nada | Imagens de referência diferentes da resolução atual | Recapture as imagens na mesma resolução do jogo |
-| Conta a mesma partida duas vezes | Confiança muito baixa | Aumente o valor de `confidence` |
-| Erro ao importar `keyboard` | Falta de permissão de administrador | Execute o terminal como **administrador** |
-| Script trava ao pressionar Q | Conflito com o foco do jogo | Alt+Tab para o terminal e pressione Q |
+- [ ] Histórico de sessões com data e hora
+- [ ] Gráfico de desempenho ao longo do tempo
+- [ ] Suporte a áudios de vitória
+- [ ] Exportar placar para `.csv` ou `.txt`
+- [ ] Configuração de confiança de detecção pela interface
+- [ ] Sistema de perfis por jogador
 
 ---
 
-## 📈 Possíveis Melhorias Futuras
+## 👨‍💻 Autor
 
-- [ ] Interface gráfica (GUI) com placar visual
-- [ ] Salvar histórico de partidas em arquivo `.csv` ou banco de dados
-- [ ] Calcular winrate automático
-- [ ] Suporte a múltiplos jogos/perfis
-- [ ] Notificações sonoras ao detectar resultado
+Desenvolvido por **[@miguelsfrds](https://github.com/miguelsfrds)**
 
 ---
 
 ## 📄 Licença
 
-Este projeto é de uso livre para fins pessoais. Sinta-se à vontade para modificar e melhorar!
-
----
-
-<div align="center">
-  Feito com ☕ e muito <strong>Magic</strong> 🃏
-</div>
+Este projeto está sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
