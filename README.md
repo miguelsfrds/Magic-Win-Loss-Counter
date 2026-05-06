@@ -1,12 +1,12 @@
-# 🧙 ScoreMage
+# 🎯 Project Tallyo
 
 > Contador automático de vitórias e derrotas para jogos online — sem digitar nada, só jogar.
 
 ---
 
-## 🎮 O que é o ScoreMage?
+## 🎮 O que é o Project Tallyo?
 
-O **ScoreMage** é uma ferramenta desktop que monitora sua tela em tempo real e detecta automaticamente quando você venceu ou perdeu uma partida. Chega de ficar anotando no papel ou perdendo a conta no meio de uma sessão intensa — o ScoreMage faz isso por você.
+O **Project Tallyo** é uma ferramenta desktop que monitora sua tela em tempo real e detecta automaticamente quando você venceu ou perdeu uma partida. Chega de ficar anotando no papel ou perdendo a conta no meio de uma sessão intensa — o Tallyo faz isso por você.
 
 E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa. 😈
 
@@ -37,7 +37,7 @@ E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa.
 
 ## 🧠 Como Funciona
 
-O ScoreMage usa a biblioteca `pyautogui` para capturar screenshots da tela a cada **0,5 segundos** e compara os frames com imagens de referência de vitória/derrota de cada jogo.
+O **Project Tallyo** usa a biblioteca `pyautogui` para capturar screenshots da tela a cada **0,5 segundos** e compara os frames com imagens de referência de vitória/derrota de cada jogo.
 
 ```
 Loop de monitoramento (a cada 0.5s):
@@ -73,8 +73,8 @@ A lógica de flag (`foi_vencedor` / `foi_derrotado`) garante que **cada resultad
 
 ```bash
 # Clone o repositório
-git clone https://github.com/miguelsfrds/scoremage.git
-cd scoremage
+git clone https://github.com/miguelsfrds/project-tallyo.git
+cd project-tallyo
 
 # Instale as dependências
 pip install customtkinter pyautogui pygame
@@ -91,7 +91,7 @@ python interface.py
 ## 📁 Estrutura do Projeto
 
 ```
-scoremage/
+project-tallyo/
 │
 ├── interface.py          # Interface gráfica principal
 ├── win_loss_counter.py   # Lógica de detecção e contagem
@@ -117,7 +117,7 @@ scoremage/
 
 ## ➕ Adicionando Novos Jogos
 
-Integrar um novo jogo ao ScoreMage é simples:
+Integrar um novo jogo ao Project Tallyo é simples:
 
 **1.** Tire prints das telas de vitória e derrota do jogo e salve em `images/`:
 ```
