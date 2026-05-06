@@ -4,11 +4,11 @@ import random
 pg.mixer.init()
 
 audios_derrota = [
-    r"D:\Estudos\PYTHON\Magic Win-Loss Counter\audios\derrotas\smzinho_derrota1.mp3",
-    r"D:\Estudos\PYTHON\Magic Win-Loss Counter\audios\derrotas\smzinho_derrota2.mp3",
-    r"D:\Estudos\PYTHON\Magic Win-Loss Counter\audios\derrotas\smzinho_derrota3.mp3",
-    r"D:\Estudos\PYTHON\Magic Win-Loss Counter\audios\derrotas\smzinho_derrota4.mp3",
-    r"D:\Estudos\PYTHON\Magic Win-Loss Counter\audios\derrotas\smzinho_derrota5.mp3",
+    r"audios\derrotas\smzinho_derrota1.mp3",
+    r"audios\derrotas\smzinho_derrota2.mp3",
+    r"audios\derrotas\smzinho_derrota3.mp3",
+    r"audios\derrotas\smzinho_derrota4.mp3",
+    r"audios\derrotas\smzinho_derrota5.mp3",
 ]
 
 def tocar_derrota():
