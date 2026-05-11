@@ -6,7 +6,7 @@
 
 ## 🎮 O que é o Project Tallyo?
 
-O **Project Tallyo** é uma ferramenta desktop que monitora sua tela em tempo real e detecta automaticamente quando você venceu ou perdeu uma partida. Chega de ficar anotando no papel ou perdendo a conta no meio de uma sessão intensa — o Tallyo faz isso por você.
+O **Project Tallyo** é uma ferramenta de terminal que monitora sua tela em tempo real e detecta automaticamente quando você venceu ou perdeu uma partida. Chega de ficar anotando no papel ou perdendo a conta no meio de uma sessão intensa — o Tallyo faz isso por você.
 
 E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa. 😈
 
@@ -15,11 +15,12 @@ E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa.
 ## ✨ Funcionalidades
 
 - 👁️ **Detecção automática por visão computacional** — reconhece telas de vitória e derrota usando reconhecimento de imagem
-- 📊 **Placar em tempo real** — vitórias e derrotas atualizados ao vivo na interface
+- 📊 **Placar em tempo real** — vitórias, derrotas e winrate atualizados ao vivo no terminal
 - 🔊 **Reação sonora nas derrotas** — toca um áudio aleatório ao detectar uma derrota
-- 🎮 **Suporte a múltiplos jogos** — troca de jogo com um clique, sem reiniciar
-- 🧵 **Monitoramento em thread separada** — o tracker roda em background sem travar a interface
-- 🛑 **Controle total** — botão dedicado para pausar o monitoramento a qualquer momento
+- 🎮 **Suporte a múltiplos jogos** — escolha o jogo pelo número no menu
+- 🧵 **Monitoramento em thread separada** — o tracker roda em background sem travar o terminal
+- 🛑 **Encerramento com ESC** — pressione ESC a qualquer momento para parar
+- 🖥️ **Compatível com Windows com escala de tela** — funciona corretamente em monitores com DPI 125%, 150% etc.
 
 ---
 
@@ -29,7 +30,6 @@ E quando você toma uma derrota... ele ainda te trolleia com um áudio surpresa.
 |---|---|
 | 🪄 Magic: The Gathering | ✅ Integrado |
 | 💥 Fortnite | ✅ Integrado |
-| ⚔️ League of Legends | ✅ Integrado |
 
 > Quer adicionar outro jogo? Veja a seção [Adicionando Novos Jogos](#-adicionando-novos-jogos).
 
@@ -55,10 +55,11 @@ A lógica de flag (`foi_vencedor` / `foi_derrotado`) garante que **cada resultad
 | Tecnologia | Finalidade |
 |---|---|
 | `Python 3.x` | Linguagem base |
-| `customtkinter` | Interface gráfica moderna |
 | `pyautogui` | Captura de tela e reconhecimento de imagem |
 | `pygame` | Reprodução dos áudios de derrota |
-| `threading` | Monitoramento em background sem travar a UI |
+| `keyboard` | Detecção do ESC para encerrar o programa |
+| `threading` | Monitoramento em background sem travar o terminal |
+| `ctypes` | Correção de DPI para monitores com escala no Windows |
 
 ---
 
@@ -77,14 +78,52 @@ git clone https://github.com/miguelsfrds/project-tallyo.git
 cd project-tallyo
 
 # Instale as dependências
-pip install customtkinter pyautogui pygame
+pip install pyautogui pygame keyboard
 ```
 
 ### Execução
 
 ```bash
-python interface.py
+python main.py
 ```
+
+---
+
+## 📦 Gerando o Executável (.exe)
+
+Para distribuir o programa sem precisar do Python instalado:
+
+```bash
+# Instale o PyInstaller
+pip install pyinstaller
+
+# Gere o executável (as imagens são embutidas; os áudios ficam externos)
+pyinstaller --onefile --icon=icone.ico --add-data "images;images" main.py
+```
+
+O executável será gerado em `dist/main.exe`.
+
+### ⚠️ Importante: copiar a pasta de áudios
+
+Os áudios **não são embutidos** no executável — eles ficam em uma pasta ao lado do `.exe`. Após gerar, copie a pasta `audios` para dentro de `dist/`:
+
+```bash
+xcopy audios dist\audios /E /I
+```
+
+A estrutura final em `dist/` deve ser:
+
+```
+dist/
+├── main.exe
+└── audios/
+    └── derrotas/
+        ├── smzinho_derrota1.mp3
+        ├── smzinho_derrota2.mp3
+        └── ...
+```
+
+> O programa sempre busca os áudios na pasta `audios/derrotas/` relativa ao local do executável, então ele funciona em qualquer diretório desde que a pasta esteja ao lado do `.exe`.
 
 ---
 
@@ -93,17 +132,18 @@ python interface.py
 ```
 project-tallyo/
 │
-├── interface.py          # Interface gráfica principal
+├── main.py               # Ponto de entrada: menu, loop principal e placar no terminal
 ├── win_loss_counter.py   # Lógica de detecção e contagem
-├── choice_audio.py       # Seleção e reprodução de áudios
+├── choice_audio.py       # Seleção e reprodução de áudios de derrota
+├── choice_game.py        # Registro dos jogos e caminhos das imagens
+├── icone.ico             # Ícone do executável
+├── main.spec             # Configuração do PyInstaller
 │
 ├── images/               # Imagens de referência para detecção
 │   ├── imagem_vitoria_magic.png
 │   ├── imagem_derrota_magic.png
 │   ├── imagem_vitoria_fortnite.png
-│   ├── imagem_derrota_fortnite.png
-│   ├── imagem_vitoria_lol.png
-│   └── imagem_derrota_lol.png
+│   └── imagem_derrota_fortnite.png
 │
 ├── audios/
 │   └── derrotas/         # Áudios tocados ao detectar derrota
@@ -125,22 +165,31 @@ images/imagem_vitoria_seujogo.png
 images/imagem_derrota_seujogo.png
 ```
 
-**2.** Adicione um botão na interface (`interface.py`):
+**2.** Registre o jogo em `choice_game.py`:
 ```python
-btn_seujogo = ctk.CTkButton(app, text="Seu Jogo", command=lambda: iniciar_jogo("seujogo"))
-btn_seujogo.pack(pady=5)
+"Seu Jogo": {
+    "vitoria": caminho_arquivo("images/imagem_vitoria_seujogo.png"),
+    "derrota": caminho_arquivo("images/imagem_derrota_seujogo.png")
+}
 ```
 
-**3.** Registre o jogo na função `iniciar_jogo`:
-```python
-elif jogo == "seujogo":
-    counter = WinLossCounter(
-        "images/imagem_vitoria_seujogo.png",
-        "images/imagem_derrota_seujogo.png"
-    )
-```
+Pronto. O menu vai exibir o novo jogo automaticamente na próxima execução.
 
 > 💡 **Dica:** Use imagens de referência com elementos únicos e estáticos da tela de fim de partida para evitar falsos positivos.
+
+---
+
+## 🐛 Diagnóstico de Problemas
+
+O programa exibe mensagens de debug no terminal para facilitar identificação de problemas:
+
+| Mensagem | O que significa |
+|---|---|
+| `[Debug] ARQUIVO NÃO ENCONTRADO: ...` | O caminho da imagem de referência está errado |
+| `[Debug] Vitória detectada!` | Imagem de vitória encontrada na tela |
+| `[Debug] Derrota detectada!` | Imagem de derrota encontrada na tela |
+| `[Audio] AVISO: Nenhum arquivo de áudio encontrado` | A pasta `audios/derrotas/` não está ao lado do executável |
+| `[Audio] Tocando: ...` | Áudio sendo reproduzido com sucesso |
 
 ---
 
@@ -150,8 +199,8 @@ elif jogo == "seujogo":
 - [ ] Gráfico de desempenho ao longo do tempo
 - [ ] Suporte a áudios de vitória
 - [ ] Exportar placar para `.csv` ou `.txt`
-- [ ] Configuração de confiança de detecção pela interface
-- [ ] Sistema de perfis por jogador
+- [ ] Configuração de confiança de detecção via argumento na linha de comando
+- [ ] Interface gráfica opcional
 
 ---
 
