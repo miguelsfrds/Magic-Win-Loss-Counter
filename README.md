@@ -163,4 +163,8 @@ Desenvolvido por **[@miguelsfrds](https://github.com/miguelsfrds)**
 
 ## 📄 Licença
 
+<<<<<<< HEAD
 Este projeto está sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
+=======
+Este projeto está sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
+>>>>>>> 10adb56 (Atualização e Pequenas Correçöes - Correção no caminho dos audios, diagnostico de erros, execução no terminal e remoção da interface gráfica)
