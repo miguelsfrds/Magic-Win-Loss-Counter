@@ -1,4 +1,6 @@
-# 🎯 Project Tallyo
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3b923f1a-d560-46d6-ad1d-725950d51418" width=800px/>
+</p>
 
 > Contador automático de vitórias e derrotas para jogos online — sem digitar nada, só jogar.
 
